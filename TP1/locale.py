@@ -5,7 +5,8 @@ import getopt
 import re
 
 def main(argv = None):
-    input = sys.stdin.read()
+    #input = sys.stdin.read()
+    input = "([(30,0),(10,10),(20,20),(30,40),(50,40)],200,1)"
 
     list1 = input.split("]")
     list2 = list1[1].strip(")").split(",");
@@ -21,6 +22,7 @@ def main(argv = None):
         Positions.append(i.split(","))
 
 
+    sys.stdout.write(K)
     search(Positions, K, C)
 
 
@@ -39,7 +41,7 @@ def solInitiale(Positions):
 
     return pointsAntenne
 
-def cout(pointsAntenne, K, C)
+def cout(pointsAntenne, K, C):
 
     sum = None
 
