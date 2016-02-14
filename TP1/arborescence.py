@@ -130,12 +130,12 @@ def search(Positions, K, C):
     while sortedQueue:
 		etat = sortedQueue.get_nowait()[1]
 
-		if not etat.ptsRestants:
+		if len(etat.antennes) == len(Positions):
 			return [a.ret() for a in etat.antennes]
 		else:
 			etat.etatsVoisins()
-			for c in etat.children:
-				sortedQueue.put_nowait((c.cost(K,C), c))
+			for c in etat.neighbours:
+				sortedQueue.put_nowait((c.coutTotal(K,C), c))
 
 
     print etatInitial.neighbours[0]
