@@ -19,9 +19,11 @@ class Antenne:
         self.r = coordinates[2]
         self.positions = positions
 
-
     def cout(self, K, C):
         return K + C * self.r ** 2
+
+    def ret(self):
+        return self.x, self.y, self.r
 
     def __str__(self):
         coordinates = [self.x, self.y, self.r]
@@ -126,13 +128,13 @@ def search(Positions, K, C):
     #etatInitial.etatsVoisins()
 
     while sortedQueue:
-		state = sortedQueue.get_nowait()[1]
+		etat = sortedQueue.get_nowait()[1]
 
-		if not state.unassigned:
-			return [a.info() for a in state.antennas]
+		if not etat.ptsRestants:
+			return [a.ret() for a in etat.antennes]
 		else:
-			state.etatsVoisins()
-			for c in state.children:
+			etat.etatsVoisins()
+			for c in etat.children:
 				sortedQueue.put_nowait((c.cost(K,C), c))
 
 
@@ -158,7 +160,7 @@ def main(argv = None):
 
 
 
-    search(Positions, K, C)
+    print search(Positions, K, C)
 
 if __name__ == "__main__":
     main()
