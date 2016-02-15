@@ -58,6 +58,12 @@ class Etat:
         return sum([antenne.cout(K, C) for antenne in self.antennes])
 
 
+    def etatValide(self):
+        if not self.ptsRestants:
+            return True
+        else:
+            return False
+
     def etatsVoisins(self):
 
         # les etats voisin seront a une difference de l'etat orginale
@@ -109,7 +115,7 @@ class Etat:
                     etat = Etat([nvAntenne], nvPtsRestants)
                 else:
                     etat = Etat([noAntenne, nvAntenne], nvPtsRestants)
-                #etat = Etat([noAntenne, nvAntenne], nvPtsRestants)
+
                 self.neighbours.append(etat)
                 ptIndex += 1
 
@@ -122,11 +128,14 @@ class Etat:
             nvCercle = make_circle([ptRestant])
             #print nvCercle
             nvAntenne = Antenne(nvCercle, [ptRestant])
-            #etat = Etat([self.antennes, nvAntenne], nvPtsRestants)
-            #self.neighbours.append(etat)
+            nvAntennes = list(self.antennes).append(nvAntenne)
+            #print "Nouvelle liste :" + str(nvAntennes)
+            if nvAntennes is not None:
+                etat = Etat(nvAntennes, nvPtsRestants)
+                self.neighbours.append(etat)
             ptIndex += 1
 
-        #Sprint "les voisins " + str(self.neighbours)
+        #print "les voisins " + str(self.neighbours)
 
 
 
@@ -137,38 +146,45 @@ def search(Positions, K, C):
     K = float(K)
     C = float(C)
 
-    posAntInitiale = make_circle(Positions)
-
     #Strategie : Notre etat initiale sera une antenne couvrant tous les points.
     #            Ainsi, ces voisins chercherons a minimiser le cout en trouvant
     #            des antennes de plus petits rayons et ainsi rrduire le cout.
     #            Nous assumons qu'un cout d'un etat est sa valeur de hashage.
     #print posAntInitiale
 
+    posAntInitiale = make_circle(Positions)
     a = Antenne(posAntInitiale, Positions)
     etatInitial = Etat([a], [])
 
+
+
+
+
     print etatInitial.coutTotal(K,C)
-    sortedQueue = Queue.PriorityQueue()
-    sortedQueue.put_nowait((etatInitial.coutTotal(K, C), etatInitial))
+    queue = Queue.PriorityQueue()
+    queue.put_nowait((etatInitial.coutTotal(K, C), etatInitial))
 
-
-    #etatInitial.etatsVoisins()
     visited = set() #visited costs, our hashin
-    while sortedQueue:
-        etat = sortedQueue.get_nowait()[1]
-        if len(etat.antennes) == len(Positions):
-			return [a.ret() for a in etat.antennes]
+    while queue:
+        #print queue.empty()
+
+        etat = queue.get_nowait()[1]
+        #print len(etat.antennes) == len(Positions)
+        if etat.etatValide():
+            return [a.ret() for a in etat.antennes]
         else:
             etat.etatsVoisins()
             for c in etat.neighbours:
-                #print c
+
                 coutTotal = c.coutTotal(K,C)
-                if coutTotal not in visited:
-                    sortedQueue.put_nowait((coutTotal, c))
-                    visited.add(coutTotal)
+                queue.put_nowait((coutTotal, c))
+                print coutTotal
+                #if coutTotal not in visited:
+                #    queue.put_nowait((coutTotal, c))
+                #    visited.add(coutTotal)
 
 
+    print "done"
     #print etatInitial.neighbours[0]
 
 
