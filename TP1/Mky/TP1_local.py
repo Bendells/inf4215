@@ -53,21 +53,9 @@ class AntennaState(State):
                 positionAntenna = (i,j)
                 for position in self.positions:
                     distance = self.getDistance(position, positionAntenna)
-                    self.antennaRay = self.findAntennaRay(positionAntenna)
                     if distance <= self.antennaRay and not self.isSuperposing(positionAntenna):
                         actions.append((i, j, self.antennaRay, position))
         return actions
-
-    def findAntennaRay(self, positionAntenna):
-        antennaRay = 1
-        trouve = False
-        while not trouve:
-            for position in self.positions:
-                distance = self.getDistance(position, positionAntenna)
-                if distance <= antennaRay:
-                    trouve = True
-            antennaRay += 1
-        return antennaRay
 
     def isSuperposing(self, position):
         (dimX, dimY) = self.dimensions

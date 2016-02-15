@@ -13,7 +13,7 @@ class AntennaState(State):
         self.dimensions = self._getSizeGrid(Positions)
         self.grid = self._initializeGrid(self.dimensions)
         self.antennaRay = 1
-        self.counter = 1
+        self.counter = 0
         self.antennas = []
         
     def equals(self,state):
@@ -28,12 +28,13 @@ class AntennaState(State):
     def executeAction(self, action):
         self.counter += 1
         (dimX, dimY) = self.dimensions
+        (x,y) = action[3]
         for i in range(dimX):
             for j in range(dimY):
                 position = (i,j)
                 positionAntenna = (action[0], action[1])
                 distance = self.getDistance(position, positionAntenna)
-                if (distance <= action[2] and self.grid[i][j] == '*'):
+                if (distance <= action[2] and not self.isSuperposing(position)):
                     self.grid[i][j] = self.counter
         self.positions.remove(action[3])
         self.antennas.append((action[0], action[1], action[2]))
@@ -46,21 +47,9 @@ class AntennaState(State):
                 positionAntenna = (i,j)
                 for position in self.positions:
                     distance = self.getDistance(position, positionAntenna)
-                    antennaRay = self.findAntennaRay(positionAntenna)
-                    if(distance <= self.antennaRay and self.grid == '*'):
+                    if distance <= self.antennaRay and not self.isSuperposing(positionAntenna):
                         actions.append((i, j, self.antennaRay, position))
         return actions
-
-    def findAntennaRay(self, positionAntenna):
-        antennaRay = 1
-        trouve = False
-        while not trouve:
-            for position in self.positions:
-                distance = self.getDistance(position, positionAntenna)
-                if distance <= antennaRay:
-                    trouve = True
-            antennaRay += 1
-        return antennaRay
 
     def isSuperposing(self, position):
         (dimX, dimY) = self.dimensions
@@ -79,10 +68,15 @@ class AntennaState(State):
         return self.K + self.C * math.pow(action[2], 2)
     
     def isGoal(self):
-        return len(self.positions) == 0
+        if len(self.positions) == 0:
+            for antenna in self.antennas:
+                print antenna
+            return True
+        else:
+            return False
 
     def heuristic(self):
-        return self.K + self.C * math.pow(self.antennaRay, 2) / self.counter
+        return self.K + self.C * math.pow(self.antennaRay, 2) / (self.counter+1)
 
     def _initializeGrid(self, dimensions):
         (dimX,dimY) = dimensions
