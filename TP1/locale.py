@@ -4,6 +4,7 @@ import sys
 import getopt
 import math
 import random
+from random import randint
 import copy
 import re
 from smallestenclosingcircle import make_circle
@@ -74,22 +75,36 @@ def solVoisine(etat):
     antennes = random.sample(etatVoisin.antennes, 2)
     antToDeprive = antennes[0]
     antToGive = antennes[1]
+    etatVoisin.antennes.remove(antToDeprive)
+    etatVoisin.antennes.remove(antToGive)
 
-    if(len(antToDeprive.positions) == 1):
-        print "Only one antenna"
-    #print antToDeprive
-    #print antToGive
+    #positionToGive = random.sample(antToDeprive.positions, 1)
+    indexPos = randint(0,len(antToDeprive.positions)-1)
+    positionToGive = antToDeprive.positions[indexPos]
+    antToDeprive.positions.remove(positionToGive)
+    antToGive.positions.append(positionToGive)
+
+    etatRetour = None
+
+    nvAntennePos = make_circle(antToGive.positions)
+    nvAntenne = Antenne(nvAntennePos, antToGive.positions)
+
+    antenaList = etatVoisin.antennes + [nvAntenne]
+    if(len(antToDeprive.positions) == 0):
+        #only one position, so we deleted that antenna and we need to reconstruct the list with the new list
+        #antToDeprive.
 
 
+        etatRetour = Etat(antenaList,[])
+
+    else:
+        #we need to update the depraved antenna
+        nvDepAntennaPos = make_circle(antToDeprive.positions)
+        nvDepAntenna = Antenne(nvDepAntennaPos, antToDeprive.positions)
+        etatRetour = Etat(antenaList + [nvDepAntenna], [])
 
 
-
-
-
-
-
-
-    return etat
+    return etatRetour
 
 
 #SolInitial, chaque point est une antenne
@@ -114,18 +129,21 @@ def cout(pointsAntenne, K, C):
     return sum
 
 def critereMetropolis(delta, temp):
+
+    if(temp == 0):
+        return False
+
     if delta > 0:
         return True
 
     random.seed()
 
-    print temp
     return math.exp(delta/temp) >= random.random()
 
 def search(Positions, K, C):
 
     tmpInitial = 1000
-    coeff = 0.003
+    coeff = 0.03
     pasMax = 200
     palier = 40
 
@@ -146,16 +164,18 @@ def search(Positions, K, C):
             delta = sol.coutTotal(K,C) - tmpSolution.coutTotal(K,C)
 
             #critere metropolis
+
             if critereMetropolis(delta, tmp):
                 sol = tmpSolution
                 if sol.coutTotal(K,C) < meilleurSol.coutTotal(K,C):
                     meilleurSol = sol
 
 
-        tmp *= coeff
+            tmp *= coeff
 
 
 
+    print meilleurSol.coutTotal(K,C)
     return meilleurSol
 
 
