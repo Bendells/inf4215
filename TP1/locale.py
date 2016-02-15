@@ -175,7 +175,10 @@ def search(Positions, K, C):
 
 
 
-    print meilleurSol.coutTotal(K,C)
+    #print meilleurSol.coutTotal(K,C)
+
+    #for ant in meilleurSol.antennes:
+    #    print ant
     return meilleurSol
 
 
@@ -199,7 +202,14 @@ def main(argv = None):
 
 
 
-    search(Positions, K, C)
+    result = search(Positions, K, C)
+
+    ret = []
+
+    for ant in result.antennes :
+        ret.append((ant.x, ant.y, ant.r))
+
+    print ret;
 
 
 if __name__ == "__main__":
