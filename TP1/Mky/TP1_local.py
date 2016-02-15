@@ -122,7 +122,7 @@ class AntennaState(State):
         return (x+1,y+1)
 
 def search(Positions, K, C):
-    solution = hillclimbing_search(AntennaState(Positions, K, C))
+    solution = csp_depthfirst_search(AntennaState(Positions, K, C))
 
 Positions = [(30,0),(10,10),(20,20),(30,40),(50,40)]
 K = 200
