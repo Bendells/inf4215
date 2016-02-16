@@ -40,8 +40,9 @@ class Etat:
         self.ptsRestants = ptsRestants
         self.neighbours = list()
 
-
-
+    def ret(self):
+        return [antenne.ret() for antenne in self.antennes]
+		
     def coutTotal(self, K, C):
         #print self
         #for antenne in self.antennes:
@@ -154,11 +155,14 @@ def search(Positions, K, C):
     meilleurSol = sol
     delta = 0
 
-    print sol.coutTotal(K, C)
+    
     tmp = tmpInitial
     for k in range(1, pasMax+1):
+        if(tmp == 0):
+            break
         for j in range(1, palier + 1):
-
+            if(tmp == 0):
+                break
             tmpSolution = solVoisine(sol)
 
             delta = sol.coutTotal(K,C) - tmpSolution.coutTotal(K,C)
@@ -179,7 +183,7 @@ def search(Positions, K, C):
 
     #for ant in meilleurSol.antennes:
     #    print ant
-    return meilleurSol
+    return meilleurSol.ret()
 
 
 
@@ -203,13 +207,9 @@ def main(argv = None):
 
 
     result = search(Positions, K, C)
+      
 
-    ret = []
-
-    for ant in result.antennes :
-        ret.append((ant.x, ant.y, ant.r))
-
-    print ret;
+    print str(result);
 
 
 if __name__ == "__main__":

@@ -4,10 +4,9 @@ import sys
 import getopt
 import re
 import Queue
+import copy
 import time
 from smallestenclosingcircle import make_circle
-
-
 
 
 class Antenne:
@@ -37,23 +36,19 @@ class Etat:
 
     'Notre abstraction d\'un Etat'
     def __init__(self, antennes, ptsRestants):
+        self.neighbours = list()
         self.antennes = antennes
         self.ptsRestants = ptsRestants
-        self.neighbours = list()
+        # "Points Restand dans le constructeur : " + str(self.ptsRestants)
 
     def __str__(self):
-        ret = "Antennes :\n"
-        ret += str(self.antennes[1])
+        return str([antenne.ret() for antenne in self.antennes])
 
-        return ret
 
+    def ret(self):
+        return [antenne.ret() for antenne in self.antennes]
+		
     def coutTotal(self, K, C):
-        #print self
-        #for antenne in self.antennes:
-            #print antenne
-
-        #print self.ptsRestants
-        #print self.antennes
 
         return sum([antenne.cout(K, C) for antenne in self.antennes])
 
@@ -67,79 +62,49 @@ class Etat:
     def etatsVoisins(self):
 
         # les etats voisin seront a une difference de l'etat orginale
+        #
 
         #on enleve un point de chaque antenne
-        antIndex = 0
+        for position in self.ptsRestants:
+            nvAntennePos = make_circle([position])
+            nvAntenne = Antenne(nvAntennePos, [position])
+            
+            nvPtsRestantes = copy.deepcopy(self.ptsRestants)
+            
+            nvPtsRestantes.remove(position)
+            
+            nvListeAntennes = copy.deepcopy(self.antennes)
+            nvListeAntennes.append(nvAntenne)
+            nvEtat = Etat(nvListeAntennes, nvPtsRestantes)
+            self.neighbours.append(nvEtat)
 
+        indexAnt = 0 # necessaire pour garder la
         for antenne in self.antennes:
-            noAntenne = self.antennes[:antIndex] + self.antennes[(antIndex + 1):]
-            posIndex = 0
-            for position in antenne.positions:
-                # We need to take out a point from the antenna and make a new state with it
-                ptsSansPos = antenne.positions[:posIndex] + antenne.positions[(posIndex + 1):]
-                #print ptsSansPos
-                if not ptsSansPos:
-                    continue
-                nvCercle = make_circle(ptsSansPos) # O(n) en complexite
+            for position in self.ptsRestants:
+                nvListePos = copy.deepcopy(antenne.positions)
+                nvListePos.append(position)
+                nvAntennePos = make_circle(nvListePos)
+                nvAntenne = Antenne(nvAntennePos, nvListePos)
+                nvPtsRestantes = copy.deepcopy(self.ptsRestants)
+                nvPtsRestantes.remove(position)
+                nvListeAntennes = copy.deepcopy(self.antennes)
 
-                nvAntenne = Antenne(nvCercle, ptsSansPos) #antenne avec les points couverts
+                del nvListeAntennes[indexAnt]
+                nvListeAntennes.append(nvAntenne)
+                nvEtat = Etat(nvListeAntennes, nvPtsRestantes)
+                self.neighbours.append(nvEtat)
+            indexAnt += 1
 
-                #print nvAntenne
+def solInitiale(Positions):
 
-                # We now creates neighbouring states with the new antennas
-                #print "Position a mettre : " + str(position)
-                if not noAntenne:
-                    etat = Etat([nvAntenne], [position])
-                else:
-                    etat = Etat([noAntenne,nvAntenne], [position])
+    antennes = [];
 
-                self.neighbours.append(etat)
-                posIndex += 1
+    position = Positions.pop(0)
+    antennes.append(Antenne(make_circle([tuple(position)]), [position]))
 
-            antIndex += 1
+    etat = Etat(antennes, Positions)
 
-            # We add a new point to the antenna
-            ptIndex = 0
-            for ptRestant in self.ptsRestants:
-                nvPtsRestants = self.ptsRestants[:ptIndex] + self.ptsRestants[(ptIndex + 1):] #nouvelles listes des points
-                nvPositions = antenne.positions + [ptRestant] #new antenna with an unsigned point
-                #print "Nv Positions Restantes: " + str(nvPtsRestants)
-                #print "Nv Positions : " + str(nvPositions)
-                nvCercle = make_circle(nvPositions)
-
-                nvAntenne = Antenne(nvCercle, nvPositions)
-
-                #print nvAntenne
-
-                if not noAntenne:
-                    etat = Etat([nvAntenne], nvPtsRestants)
-                else:
-                    etat = Etat([noAntenne, nvAntenne], nvPtsRestants)
-
-                self.neighbours.append(etat)
-                ptIndex += 1
-
-
-        #new Atennas with remaining pts
-        ptIndex = 0
-        for ptRestant in self.ptsRestants:
-            nvPtsRestants = self.ptsRestants[:ptIndex] + self.ptsRestants[(ptIndex + 1):] #nouvelles listes des points
-            #print ptRestant
-            nvCercle = make_circle([ptRestant])
-            #print nvCercle
-            nvAntenne = Antenne(nvCercle, [ptRestant])
-            nvAntennes = list(self.antennes).append(nvAntenne)
-            #print "Nouvelle liste :" + str(nvAntennes)
-            if nvAntennes is not None:
-                etat = Etat(nvAntennes, nvPtsRestants)
-                self.neighbours.append(etat)
-            ptIndex += 1
-
-        #print "les voisins " + str(self.neighbours)
-
-
-
-
+    return etat
 
 def search(Positions, K, C):
 
@@ -152,40 +117,39 @@ def search(Positions, K, C):
     #            Nous assumons qu'un cout d'un etat est sa valeur de hashage.
     #print posAntInitiale
 
-    posAntInitiale = make_circle(Positions)
-    a = Antenne(posAntInitiale, Positions)
-    etatInitial = Etat([a], [])
+
+    #etatInitial = solInitiale(Positions)
+    etatInitial = Etat([], Positions)
 
 
 
 
-
-    print etatInitial.coutTotal(K,C)
-    queue = Queue.PriorityQueue()
-    queue.put_nowait((etatInitial.coutTotal(K, C), etatInitial))
+    #print etatInitial.coutTotal(K,C)
+    frontiere = Queue.PriorityQueue()
+    frontiere.put_nowait((etatInitial.coutTotal(K, C), etatInitial))
 
     visited = set() #visited costs, our hashin
-    while queue:
+    while frontiere:
         #print queue.empty()
 
-        etat = queue.get_nowait()[1]
+        etat = frontiere.get_nowait()[1]
         #print len(etat.antennes) == len(Positions)
         if etat.etatValide():
-            return [a.ret() for a in etat.antennes]
+            #print etat
+            return etat.ret()
         else:
             etat.etatsVoisins()
             for c in etat.neighbours:
 
                 coutTotal = c.coutTotal(K,C)
-                queue.put_nowait((coutTotal, c))
-                print coutTotal
-                #if coutTotal not in visited:
-                #    queue.put_nowait((coutTotal, c))
-                #    visited.add(coutTotal)
+                #frontiere.put_nowait((coutTotal, c))
+                #print coutTotal
+                if coutTotal not in visited:
+                    frontiere.put_nowait((coutTotal, c))
+                    visited.add(coutTotal)
 
 
-    print "done"
-    #print etatInitial.neighbours[0]
+
 
 
 def main(argv = None):
@@ -209,9 +173,11 @@ def main(argv = None):
 
     result = search(Positions, K, C)
 
-    print result
+    print str(result)
+
 
 if __name__ == '__main__':
     main()
+
 
 
