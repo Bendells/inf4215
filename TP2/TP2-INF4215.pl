@@ -1,4 +1,3 @@
-
 	cours(mth1101).
 	cours(mth1006).
 	cours(mth1102).
@@ -37,6 +36,47 @@
 	cours(log4900).
 	cours(inf3005).
 	cours(log3005).
+
+	sujetsCours(mth1101, ["suites"," series"," taylor"," gradient"," lagrange"]).
+	sujetsCours(mth1006, ["transposées"," permutations"," espaces"," rang"," transformations"," hermitiennes"]).
+	sujetsCours(mth1102, ["integrales"," coordonnées"," curvilignes"," green"," divergence"]).
+	sujetsCours(mth1110, ["différentielles"," ordinaires"," oscillations"," laplace"]).
+	sujetsCours(mth1210, ["taylor"," euler"," runge-kutta"," différences-finies"]).
+	sujetsCours(mth2302, ["probabilités"," tolérance"," paramétriques"," fiabilité"," prévisionnelle"," tests"," intervalle-confiance"]).
+	sujetsCours(inf1005, ["C"," C++"," fichiers-texte"," fichiers-binaire"," classes"]).
+	sujetsCours(inf1010, ["C++"," objets"," pointeurs"," heritage"," stl"]).
+	sujetsCours(inf2010, ["listes"," piles"," files"," vecteurs"," tri"," arbre-binaire"]).
+	sujetsCours(log2410, ["analyse", "patrons", "uml", "diagrammes"]).
+	sujetsCours(log2810, ["automates", "grammaires", "langages", "recursive", "graphes", "inférence", "déductions"]).
+	sujetsCours(inf1040, ["historique", "carrieres", "rétroaction", "projection", "contraintes"]).
+	sujetsCours(inf1500, ["Karnaugh", "multiplexeurs", "codeurs", "registres", "compteurs", "bascules"]).
+	sujetsCours(log1000, ["analyse", "spécifications", "tests", "prototypage", "consistance"]).
+	sujetsCours(inf1600, ["microprocesseur", "mémoire", "bus", "alignement", "adressage"]).
+	sujetsCours(inf2610, ["fonctions", "services", "Interblocage", "processus", "systeme exploitation"]).
+	sujetsCours(inf3710, ["sql", "requetes"]).
+
+	credits(mth1101, 2).
+	credits(mth1006, 2).
+	credits(mth1102, 2).
+	credits(mth1110, 2).
+	credits(mth1210, 1).	
+	credits(inf1995, 4).
+	credits(inf2990, 4).	
+	credits(ssh5501, 2).
+	credits(inf3990, 4).
+	credits(log3900, 4).
+	credits(inf4990, 4).
+	credits(log4900, 4).
+	credits(inf3005, 1).
+	credits(log3005, 1).
+ 
+    inverse(inf4215).
+	inverse(inf3500).
+
+	langage("C++", [inf1005, inf1010, inf2410, inf2610, inf2810, inf3405, inf4710]).
+	langage("C", [inf1005, inf2610, inf3990, inf4990, inf4705]).
+	langage("Java", [inf2010, inf2420, inf4705]).
+	langage("Python", [inf4215]).
 
 	prerequis(mth1102, mth1101).
 	prerequis(mth1110, mth1101).
@@ -86,11 +126,4 @@
 	corequis(log3000, log3900).
 	corequis(inf3990, inf3005).
 	corequis(log3900, log3005).
-	
-	
-
-
-
-
-
 
