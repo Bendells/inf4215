@@ -126,4 +126,70 @@
 	corequis(log3000, log3900).
 	corequis(inf3990, inf3005).
 	corequis(log3900, log3005).
+	
+	type_cours(mth1101, obligatoire, tous).
+	type_cours(mth1006, obligatoire, tous).
+	type_cours(mth1102, obligatoire, tous).
+	type_cours(mth1110, obligatoire, tous).
+	type_cours(mth1210, obligatoire, tous).
+	type_cours(mth2302, obligatoire, tous).
+	type_cours(inf1005, obligatoire, infolog).
+	type_cours(inf1010, obligatoire, infolog).
+	type_cours(inf2010, obligatoire, infolog).
+	type_cours(log2410, obligatoire, infolog).
+	type_cours(log2810, obligatoire, infolog).
+	type_cours(inf1040, obligatoire, infolog).
+	type_cours(inf1500, obligatoire, infolog).
+	type_cours(log1000, obligatoire, infolog).
+	type_cours(inf1600, obligatoire, infolog).
+	type_cours(inf2610, obligatoire, infolog).
+	type_cours(inf3710, obligatoire, infolog).
+	type_cours(inf1995, projet, infolog).
+	type_cours(inf2990, projet, infolog).
+	type_cours(log2420, obligatoire, logiciel).
+	type_cours(ssh5100, obligatoire, tous).
+	type_cours(inf3405, obligatoire, infolog).
+	type_cours(inf3405, option, biomedical).
+	type_cours(phs1101, obligatoire, tous).
+	type_cours(ssh5201, obligatoire, tous).
+	type_cours(inf4705, obligatoire, informatique).
+	type_cours(inf4705, obligatoire, logiciel, classique).
+	type_cours(inf4705, option, logiciel, multimedia).
+	type_cours(ssh5501, obligatoire, tous).
+	type_cours(inf2705, obligatoire, informatique).
+	type_cours(inf2705, obligatoire, logiciel, multimedia).
+	type_cours(inf4215, option, informatique).
+	type_cours(inf4215, option, logiciel, classique).
+	type_cours(inf4215, obligatoire, logiciel, multimedia).
+	type_cours(inf3500, obligatoire, informatique).
+	type_cours(ele2302, obligatoire, informatique).
+	type_cours(inf3610, obligatoire, informatique).
+	type_cours(log3000, obligatoire, logiciel).
+	type_cours(inf3990, projet, informatique).
+	type_cours(log3900, projet, logiciel).
+	type_cours(inf4990, projet, informatique).
+	type_cours(log4900, projet, logiciel).
+	type_cours(inf3005, obligatoire, informatique).
+	type_cours(log3005, obligatoire, logiciel).
 
+	genie(logiciel).
+	genie(informatique).
+	genie(infolog).
+	genie(biomedical).
+	genie(electrique).
+	genie(tous).
+
+	concentration(multimedia).
+	concentration(classique).
+
+	cheminement(tous, [mth1101, mth1006, mth1102, mth1110, mth1210, mth2302, ssh5100, phs1101, ssh5201, ssh5501]).
+	cheminement(biomedical, [inf3405, inf1005]).
+	cheminement(electrique, [inf1005, inf1010]).
+	cheminement(infolog, [inf1005, inf1010, inf2010, log2410, log2810, inf1040, inf1500, log1000, 
+		inf1600, inf2610, inf3710, inf1995, inf2990, inf3405, inf4705, inf2705, inf4215]).
+	cheminement(logiciel, [log2420, log3000, log3900, log3005]).
+	cheminement(informatique, [inf3500, ele2302, inf3610, inf3990, inf4990, inf3005]).
+
+	type(obligatoire).
+	type(projet).
+	type(option).
