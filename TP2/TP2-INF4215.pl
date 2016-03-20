@@ -156,10 +156,24 @@ credits(X, Y) :-
 inverse(inf4215).
 inverse(inf3500).
 
-langage("C++", [inf1005, inf1010, inf2410, inf2610, inf2810, inf3405, inf4710]).
-langage("C", [inf1005, inf2610, inf3990, inf4990, inf4705]).
-langage("Java", [inf2010, inf2420, inf4705]).
-langage("Python", [inf4215]).
+langage(1, [inf1005, inf1010, inf2410, inf2610, inf2810, inf3405, inf4710]).
+langage(2, [inf1005, inf2610, inf3990, inf4990, inf4705]).
+langage(3, [inf2010, inf2420, inf4705]).
+langage(4, [inf4215]).
+
+getCoursLangage(Langage, Cours) :-
+	(
+		Langage == "C++" ->	langage(1, Cours);
+		(
+			Langage == "C" ->	langage(2, Cours);
+			(
+				Langage == "Python" ->	langage(3, Cours);
+				(
+					Langage == "Java" ->	langage(4, Cours);
+					Cours = [])
+			)
+		)
+	).
 
 prerequis(mth1102, mth1101).
 prerequis(mth1110, mth1101).
@@ -268,8 +282,8 @@ type_cours(inf4990, projet, informatique).
 type_cours(log4900, projet, logiciel).
 type_cours(inf3005, obligatoire, informatique).
 type_cours(log3005, obligatoire, logiciel).
-type_cours(inf4705, obligatoire, logiciel, classique).
-type_cours(inf4215, obligatoire, logiciel, multimedia).
+type_cours(inf4705, obligatoire, logiciel, classique) :- type_cours(inf4705, obligatoire, logiciel).
+type_cours(inf4215, obligatoire, logiciel, multimedia):- type_cours(inf4215, obligatoire, logiciel).
 type_cours(inf2705, obligatoire, logiciel, multimedia).
 type_cours(inf4705, option, logiciel, multimedia).
 type_cours(inf4215, option, logiciel, classique).
