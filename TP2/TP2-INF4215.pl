@@ -1,6 +1,7 @@
 %Predicates
 set([], []).
 set([H|T], [H|T1]) :- subtract(T, [H], T2), set(T2, T1).
+%%%%%
 
 inscrire(Etudiant, Liste):-
 	getChoixValide(Etudiant, Liste),
@@ -60,27 +61,31 @@ getCoursClasseInversee(Liste):-
 	findall(C0, inverse(C0), Liste).
 
 getCoursObligatoiresSuivis(Etudiant, Liste):-
-	etudiant(Etudiant),
+	genie(Etudiant, Programme, Concentration),
 	getCoursSuivis(Etudiant, Cours),
-	getTousCoursType(obligatoire, ListeCours),
-	intersection(Cours, ListeCours, Liste).
+	getTousCoursType(obligatoire, Programme, Concentration, ListeCours),
+	getCoursProjetsSuivis(Etudiant, ListeProjets),
+	intersection(Cours, ListeCours, ListeTemp),
+	append(ListeTemp, ListeProjets, Liste).
 
 getCoursProjetsSuivis(Etudiant, Liste):-
-	etudiant(Etudiant),
+	genie(Etudiant, Programme, Concentration),
 	getCoursSuivis(Etudiant, Cours),
-	getTousCoursType(projet, ListeCours),
+	getTousCoursType(projet, Programme, Concentration, ListeCours),
 	intersection(Cours, ListeCours, Liste).
 
 getCoursOptionnelsSuivis(Etudiant, Liste):-
-	etudiant(Etudiant),
+	genie(Etudiant, Programme, Concentration),
 	getCoursSuivis(Etudiant, Cours),
-	getTousCoursType(option, ListeCours),
+	getTousCoursType(option, Programme, Concentration, ListeCours),
 	intersection(Cours, ListeCours, Liste).
 
-getTousCoursType(Type, Liste):-
-	findall(C0, type_cours(C0,Type,_,_), L1),
-	findall(C1, type_cours(C1,Type,_), L2),
-	union(L1, L2, Liste).
+getTousCoursType(Type, Programme, Concentration, Liste):-
+	findall(C, type_cours(C, Type), L0),
+	findall(C0, type_cours(C0,Type,Programme,Concentration), L1),
+	findall(C1, type_cours(C1,Type,Programme), L2),
+	union(L0, L1, L3),
+	union(L3, L2, Liste).
 
 cours(mth1101).
 cours(mth1006).
@@ -247,33 +252,32 @@ getNbCreditsPrealable(Cours, Result):-
 ).
 
 
-type_cours(mth1101, obligatoire, tous).
-type_cours(mth1006, obligatoire, tous).
-type_cours(mth1102, obligatoire, tous).
-type_cours(mth1110, obligatoire, tous).
-type_cours(mth1210, obligatoire, tous).
-type_cours(mth2302, obligatoire, tous).
-type_cours(inf1005, obligatoire, infolog).
-type_cours(inf1010, obligatoire, infolog).
-type_cours(inf2010, obligatoire, infolog).
-type_cours(log2410, obligatoire, infolog).
-type_cours(log2810, obligatoire, infolog).
-type_cours(inf1040, obligatoire, infolog).
-type_cours(inf1500, obligatoire, infolog).
-type_cours(log1000, obligatoire, infolog).
-type_cours(inf1600, obligatoire, infolog).
-type_cours(inf2610, obligatoire, infolog).
-type_cours(inf3710, obligatoire, infolog).
-type_cours(inf1995, projet, infolog).
-type_cours(inf2990, projet, infolog).
+type_cours(mth1101, obligatoire).
+type_cours(mth1006, obligatoire).
+type_cours(mth1102, obligatoire).
+type_cours(mth1110, obligatoire).
+type_cours(mth1210, obligatoire).
+type_cours(mth2302, obligatoire).
+type_cours(inf1005, obligatoire).
+type_cours(inf1010, obligatoire).
+type_cours(inf2010, obligatoire).
+type_cours(log2410, obligatoire).
+type_cours(log2810, obligatoire).
+type_cours(inf1040, obligatoire).
+type_cours(inf1500, obligatoire).
+type_cours(log1000, obligatoire).
+type_cours(inf1600, obligatoire).
+type_cours(inf2610, obligatoire).
+type_cours(inf3710, obligatoire).
+type_cours(ssh5100, obligatoire).
+type_cours(phs1101, obligatoire).
+type_cours(ssh5201, obligatoire).
+type_cours(inf3405, obligatoire).
+type_cours(ssh5501, obligatoire).
+type_cours(inf1995, projet).
+type_cours(inf2990, projet).
 type_cours(log2420, obligatoire, logiciel).
-type_cours(ssh5100, obligatoire, tous).
-type_cours(inf3405, obligatoire, infolog).
-type_cours(inf3405, option, biomedical).
-type_cours(phs1101, obligatoire, tous).
-type_cours(ssh5201, obligatoire, tous).
 type_cours(inf4705, obligatoire, informatique).
-type_cours(ssh5501, obligatoire, tous).
 type_cours(inf2705, obligatoire, informatique).
 type_cours(inf4215, option, informatique).
 type_cours(inf3500, obligatoire, informatique).
@@ -287,28 +291,29 @@ type_cours(log4900, projet, logiciel).
 type_cours(inf3005, obligatoire, informatique).
 type_cours(log3005, obligatoire, logiciel).
 type_cours(inf4705, obligatoire, logiciel, classique).
-type_cours(inf4215, obligatoire, logiciel, multimedia):- type_cours(inf4215, obligatoire, logiciel).
+type_cours(inf4215, obligatoire, logiciel, multimedia).
 type_cours(inf2705, obligatoire, logiciel, multimedia).
 type_cours(inf4705, option, logiciel, multimedia).
 type_cours(inf4215, option, logiciel, classique).
 
-genie(logiciel).
-genie(informatique).
-genie(infolog).
-genie(biomedical).
-genie(electrique).
-genie(tous).
-
 concentration(multimedia).
 concentration(classique).
 
-cheminement(tous, [mth1101, mth1006, mth1102, mth1110, mth1210, mth2302, ssh5100, phs1101, ssh5201, ssh5501]).
-cheminement(biomedical, [inf3405, inf1005]).
-cheminement(electrique, [inf1005, inf1010]).
-cheminement(infolog, [inf1005, inf1010, inf2010, log2410, log2810, inf1040, inf1500, log1000,
-	inf1600, inf2610, inf3710, inf1995, inf2990, inf3405, inf4705, inf2705, inf4215]).
-cheminement(logiciel, [log2420, log3000, log3900, log3005]).
-cheminement(informatique, [inf3500, ele2302, inf3610, inf3990, inf4990, inf3005]).
+infolog(Result):-
+	commun(X),
+	append(X, [inf1005, inf1010, inf2010, log2410, log2810, inf1040, inf1500, log1000,
+	inf1600, inf2610, inf3710, inf1995, inf2990, inf3405, inf4705, inf2705, inf4215], Result).
+
+commun( [mth1101, mth1006, mth1102, mth1110, mth1210, mth2302, ssh5100, phs1101, ssh5201, ssh5501]).
+
+
+cheminement(logiciel, Result):-
+	infolog(X),
+	append(X,[log2420, log3000, log3900, log3005], Result).
+	
+cheminement(informatique, Result):-
+	infolog(X),
+	append(X,[inf3500, ele2302, inf3610, inf3990, inf4990, inf3005], Result).
 
 type(obligatoire).
 type(projet).
@@ -328,3 +333,10 @@ etudiant(houcine).
 etudiant(fazil).
 etudiant(maiky).
 etudiant(dago).
+
+genie(maiky, logiciel, multimedia).
+genie(fazil, logiciel, classique).
+genie(dago, logiciel, multimedia).
+genie(slimane, informatique, classique).
+genie(houcine, informatique, securite).
+
