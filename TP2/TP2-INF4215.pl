@@ -2,44 +2,41 @@
 set([], []).
 set([H|T], [H|T1]) :- subtract(T, [H], T2), set(T2, T1).
 
-%
-
-
 inscrire(Etudiant, Liste):-
 	getChoixValide(Etudiant, Liste),
-	forall(member(C, Liste), assert(coursSuivis(Etudiant, C)).
+	forall(member(C, Liste), assert(coursSuivis(Etudiant, C))).
 
-getChoixValide(Etudiant, Liste):-	
+getChoixValide(Etudiant, Liste):-
 	forall(member(C, Liste), cours(C)),
 	nbCreditsValide(Liste),
-	forall(member(C1, Liste), getPrerequisValide(Etudiant, C1)),	
+	forall(member(C1, Liste), getPrerequisValide(Etudiant, C1)),
 	forall(member(C2, Liste), getCorequisValide(Etudiant, C2, Liste)),
 	forall(member(C3, Liste), getNbCreditsValide(Etudiant, C3)).
 
 getNbCreditsValide(Etudiant, Cours):-
-	getCreditsEtudiant(Etudiant, Total),	
+	getCreditsEtudiant(Etudiant, Total),
 	getNbCreditsPrealable(Cours, X),
 	Total >= X .
 
 getCorequisValide(Etudiant, Cours, Liste):-
 	findall(C0, corequis(Cours, C0), C),
-	findall(X0, coursSuivis(Etudiant, X0), X), 
-	union(X, Liste, L), 
+	findall(X0, coursSuivis(Etudiant, X0), X),
+	union(X, Liste, L),
 	intersection(C, L, C).
-	
-	
+
+
 getPrerequisValide(Etudiant, Cours):-
 	findall(C0, prerequis(Cours, C0), C),
 	findall(X0, coursSuivis(Etudiant, X0), X),
 	intersection(C, X, C).
-	
+
 
 getCreditsEtudiant(Etudiant, Total) :-
 	findall(X0, coursSuivis(Etudiant, X0), X),
 	totalCredits(X, Total).
-	
+
 getCoursSuivis(Etudiant, Result) :-
-	findall(X0, coursSuivis(Etudiant, X0), X).
+	findall(X0, coursSuivis(Etudiant, X0), Result).
 
 nbCreditsValide(A):-
 	set(A, A2),
@@ -52,7 +49,39 @@ totalCredits([A|B], Total):-
 	totalCredits(B, Rest),
 	credits(A, C),
 	Total is C + Rest.
-	
+
+getProgrammeCours(Cours, Programme):-
+	cours(Cours),
+	findall(P0, type_cours(Cours,_,P0,_), L1),
+	findall(P1, type_cours(Cours,_,P1), L2),
+	union(L1,L2,Programme).
+
+getCoursClasseInversee(Liste):-
+	findall(C0, inverse(C0), Liste).
+
+getCoursObligatoiresSuivis(Etudiant, Liste):-
+	etudiant(Etudiant),
+	getCoursSuivis(Etudiant, Cours),
+	getTousCoursType(obligatoire, ListeCours),
+	intersection(Cours, ListeCours, Liste).
+
+getCoursProjetsSuivis(Etudiant, Liste):-
+	etudiant(Etudiant),
+	getCoursSuivis(Etudiant, Cours),
+	getTousCoursType(projet, ListeCours),
+	intersection(Cours, ListeCours, Liste).
+
+getCoursOptionnelsSuivis(Etudiant, Liste):-
+	etudiant(Etudiant),
+	getCoursSuivis(Etudiant, Cours),
+	getTousCoursType(option, ListeCours),
+	intersection(Cours, ListeCours, Liste).
+
+getTousCoursType(Type, Liste):-
+	findall(C0, type_cours(C0,Type,_,_), L1),
+	findall(C1, type_cours(C1,Type,_), L2),
+	union(L1, L2, Liste).
+
 cours(mth1101).
 cours(mth1006).
 cours(mth1102).
@@ -93,17 +122,17 @@ cours(inf3005).
 cours(log3005).
 
 sujetsCours(mth1101, ["suites"," series"," taylor"," gradient"," lagrange"]).
-sujetsCours(mth1006, ["transposées"," permutations"," espaces"," rang"," transformations"," hermitiennes"]).
-sujetsCours(mth1102, ["integrales"," coordonnées"," curvilignes"," green"," divergence"]).
-sujetsCours(mth1110, ["différentielles"," ordinaires"," oscillations"," laplace"]).
-sujetsCours(mth1210, ["taylor"," euler"," runge-kutta"," différences-finies"]).
-sujetsCours(mth2302, ["probabilités"," tolérance"," paramétriques"," fiabilité"," prévisionnelle"," tests"," intervalle-confiance"]).
+sujetsCours(mth1006, ["transposÃ©es"," permutations"," espaces"," rang"," transformations"," hermitiennes"]).
+sujetsCours(mth1102, ["integrales"," coordonnÃ©es"," curvilignes"," green"," divergence"]).
+sujetsCours(mth1110, ["diffÃ©rentielles"," ordinaires"," oscillations"," laplace"]).
+sujetsCours(mth1210, ["taylor"," euler"," runge-kutta"," diffÃ©rences-finies"]).
+sujetsCours(mth2302, ["probabilitÃ©s"," tolÃ©rance"," paramÃ©triques"," fiabilitÃ©"," prÃ©visionnelle"," tests"," intervalle-confiance"]).
 sujetsCours(inf1005, ["C"," C++"," fichiers-texte"," fichiers-binaire"," classes"]).
 sujetsCours(inf1010, ["C++"," objets"," pointeurs"," heritage"," stl"]).
 sujetsCours(inf2010, ["listes"," piles"," files"," vecteurs"," tri"," arbre-binaire"]).
 sujetsCours(log2410, ["analyse", "patrons", "uml", "diagrammes"]).
-sujetsCours(log2810, ["automates", "grammaires", "langages", "recursive", "graphes", "inférence", "déductions"]).
-sujetsCours(inf1040, ["historique", "carrieres", "rétroaction", "projection", "contraintes"]).
+sujetsCours(log2810, ["automates", "grammaires", "langages", "recursive", "graphes", "infÃ©rence", "dÃ©ductions"]).
+sujetsCours(inf1040, ["historique", "carrieres", "rÃ©troaction", "projection", "contraintes"]).
 sujetsCours(inf1500, ["Karnaugh", "multiplexeurs", "codeurs", "registres", "compteurs", "bascules"]).
 sujetsCours(log1000, ["analyse", "specifications", "tests", "prototypage", "consistance"]).
 sujetsCours(inf1600, ["microprocesseur", "memoire", "bus", "alignement", "adressage"]).
@@ -111,7 +140,7 @@ sujetsCours(inf2610, ["fonctions", "services", "Interblocage", "processus", "sys
 sujetsCours(inf3710, ["sql", "requetes"]).
 
 
-credits(X, Y) :- 
+credits(X, Y) :-
 	(
 		member(X, [mth1101, mth1006, mth1102, mth1110, ssh5501]) ->	Y is 2;
 		(
@@ -121,8 +150,8 @@ credits(X, Y) :-
 				Y is 3
 			)
 		)
-	). 	  
-	  
+	).
+
 
 inverse(inf4215).
 inverse(inf3500).
@@ -198,7 +227,7 @@ getNbCreditsPrealable(Cours, Result):-
 	credit_prealable(Cours,X) -> Result is X;
 	Result is 0
 ).
-	
+
 
 type_cours(mth1101, obligatoire, tous).
 type_cours(mth1006, obligatoire, tous).
@@ -226,14 +255,9 @@ type_cours(inf3405, option, biomedical).
 type_cours(phs1101, obligatoire, tous).
 type_cours(ssh5201, obligatoire, tous).
 type_cours(inf4705, obligatoire, informatique).
-type_cours(inf4705, obligatoire, logiciel, classique).
-type_cours(inf4705, option, logiciel, multimedia).
 type_cours(ssh5501, obligatoire, tous).
 type_cours(inf2705, obligatoire, informatique).
-type_cours(inf2705, obligatoire, logiciel, multimedia).
 type_cours(inf4215, option, informatique).
-type_cours(inf4215, option, logiciel, classique).
-type_cours(inf4215, obligatoire, logiciel, multimedia).
 type_cours(inf3500, obligatoire, informatique).
 type_cours(ele2302, obligatoire, informatique).
 type_cours(inf3610, obligatoire, informatique).
@@ -244,6 +268,11 @@ type_cours(inf4990, projet, informatique).
 type_cours(log4900, projet, logiciel).
 type_cours(inf3005, obligatoire, informatique).
 type_cours(log3005, obligatoire, logiciel).
+type_cours(inf4705, obligatoire, logiciel, classique).
+type_cours(inf4215, obligatoire, logiciel, multimedia).
+type_cours(inf2705, obligatoire, logiciel, multimedia).
+type_cours(inf4705, option, logiciel, multimedia).
+type_cours(inf4215, option, logiciel, classique).
 
 genie(logiciel).
 genie(informatique).
@@ -267,10 +296,16 @@ type(obligatoire).
 type(projet).
 type(option).
 
+non_accessible(ssh5501).
+non_accessible(inf3005).
+non_accessible(log3005).
+getCoursNonAccessibleEchange(Cours):-
+    findall(X0, non_accessible(X0), C0),
+    findall(X1, type_cours(X1, projet, _), C1),
+    union(C0, C1, Cours).
+
 etudiant(slimane).
 etudiant(houcine).
 etudiant(fazil).
 etudiant(maiky).
 etudiant(dago).
-
-
