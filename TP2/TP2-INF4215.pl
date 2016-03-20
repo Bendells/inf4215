@@ -122,23 +122,27 @@ cours(inf3005).
 cours(log3005).
 
 sujetsCours(mth1101, ["suites"," series"," taylor"," gradient"," lagrange"]).
-sujetsCours(mth1006, ["transposÃ©es"," permutations"," espaces"," rang"," transformations"," hermitiennes"]).
-sujetsCours(mth1102, ["integrales"," coordonnÃ©es"," curvilignes"," green"," divergence"]).
-sujetsCours(mth1110, ["diffÃ©rentielles"," ordinaires"," oscillations"," laplace"]).
-sujetsCours(mth1210, ["taylor"," euler"," runge-kutta"," diffÃ©rences-finies"]).
-sujetsCours(mth2302, ["probabilitÃ©s"," tolÃ©rance"," paramÃ©triques"," fiabilitÃ©"," prÃ©visionnelle"," tests"," intervalle-confiance"]).
+sujetsCours(mth1006, ["transposees"," permutations"," espaces"," rang"," transformations"," hermitiennes"]).
+sujetsCours(mth1102, ["integrales"," coordonnees"," curvilignes"," green"," divergence"]).
+sujetsCours(mth1110, ["differentielles"," ordinaires"," oscillations"," laplace"]).
+sujetsCours(mth1210, ["taylor"," euler"," runge-kutta"," differences-finies"]).
+sujetsCours(mth2302, ["probabilites"," tolerance"," parametriques"," fiabilite"," previsionnelle"," tests"," intervalle-confiance"]).
 sujetsCours(inf1005, ["C"," C++"," fichiers-texte"," fichiers-binaire"," classes"]).
 sujetsCours(inf1010, ["C++"," objets"," pointeurs"," heritage"," stl"]).
 sujetsCours(inf2010, ["listes"," piles"," files"," vecteurs"," tri"," arbre-binaire"]).
 sujetsCours(log2410, ["analyse", "patrons", "uml", "diagrammes"]).
-sujetsCours(log2810, ["automates", "grammaires", "langages", "recursive", "graphes", "infÃ©rence", "dÃ©ductions"]).
-sujetsCours(inf1040, ["historique", "carrieres", "rÃ©troaction", "projection", "contraintes"]).
+sujetsCours(log2810, ["automates", "grammaires", "langages", "recursive", "graphes", "inference", "deductions"]).
+sujetsCours(inf1040, ["historique", "carrieres", "retroaction", "projection", "contraintes"]).
 sujetsCours(inf1500, ["Karnaugh", "multiplexeurs", "codeurs", "registres", "compteurs", "bascules"]).
 sujetsCours(log1000, ["analyse", "specifications", "tests", "prototypage", "consistance"]).
 sujetsCours(inf1600, ["microprocesseur", "memoire", "bus", "alignement", "adressage"]).
 sujetsCours(inf2610, ["fonctions", "services", "Interblocage", "processus", "systeme exploitation"]).
 sujetsCours(inf3710, ["sql", "requetes"]).
 
+getEquivalenceValide(Cours, Liste):-
+	sujetsCours(Cours, Sujets),
+	intersection(Sujets, Liste , Sujets).
+	
 
 credits(X, Y) :-
 	(
@@ -282,7 +286,7 @@ type_cours(inf4990, projet, informatique).
 type_cours(log4900, projet, logiciel).
 type_cours(inf3005, obligatoire, informatique).
 type_cours(log3005, obligatoire, logiciel).
-type_cours(inf4705, obligatoire, logiciel, classique) :- type_cours(inf4705, obligatoire, logiciel).
+type_cours(inf4705, obligatoire, logiciel, classique).
 type_cours(inf4215, obligatoire, logiciel, multimedia):- type_cours(inf4215, obligatoire, logiciel).
 type_cours(inf2705, obligatoire, logiciel, multimedia).
 type_cours(inf4705, option, logiciel, multimedia).
@@ -313,6 +317,7 @@ type(option).
 non_accessible(ssh5501).
 non_accessible(inf3005).
 non_accessible(log3005).
+
 getCoursNonAccessibleEchange(Cours):-
     findall(X0, non_accessible(X0), C0),
     findall(X1, type_cours(X1, projet, _), C1),
