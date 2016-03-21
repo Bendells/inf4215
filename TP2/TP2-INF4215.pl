@@ -51,11 +51,31 @@ totalCredits([A|B], Total):-
 	credits(A, C),
 	Total is C + Rest.
 
+
+appendProgram(Cours, Programme, Result):-
+	 cheminement(Programme, ListeCheminement),	
+	(
+		member(Cours, ListeCheminement) -> append(Programme, [], TmpRes); 
+		true
+	),
+	Result = TmpRes.
+
+
+
 getProgrammeCours(Cours, Programme):-
 	cours(Cours),
-	findall(P0, type_cours(Cours,_,P0,_), L1),
-	findall(P1, type_cours(Cours,_,P1), L2),
-	union(L1,L2,Programme).
+	(
+		type_cours(Cours, _) -> Programme = [informatique, logiciel];
+		(findall(P0, type_cours(Cours,_,P0,_), L1),
+		findall(P1, type_cours(Cours,_,P1), L2),
+		union(L1,L2,Programme))
+	
+	).
+	%findall(P0, cheminement(P0, P), P),
+	%forall(member(C3, Liste), getNbCreditsValide(Etudiant, C3)).
+	%forall(member(P1, P),  appendProgram(Cours, P1, Result)),
+	%Programme = Result.  
+	
 
 getCoursClasseInversee(Liste):-
 	findall(C0, inverse(C0), Liste).
@@ -86,6 +106,16 @@ getTousCoursType(Type, Programme, Concentration, Liste):-
 	findall(C1, type_cours(C1,Type,Programme), L2),
 	union(L0, L1, L3),
 	union(L3, L2, Liste).
+
+getQualiteChoix(Etudiant, ListeCours, Result):-
+	getChoixValide(Etudiant, ListeCours),
+	genie(Etudiant, Programme, _),
+	cheminement(Programme, ListeCheminement),
+	(
+		intersection(ListeCours, ListeCheminement, ListeCours) -> Result = "Good";
+		Result = "Bad : some of the courses you took aren't in your program"
+	).
+	
 
 cours(mth1101).
 cours(mth1006).
