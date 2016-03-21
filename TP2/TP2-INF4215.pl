@@ -52,15 +52,8 @@ totalCredits([A|B], Total):-
 	Total is C + Rest.
 
 
-appendProgram(Cours, Programme, Result):-
-	 cheminement(Programme, ListeCheminement),	
-	(
-		member(Cours, ListeCheminement) -> append(Programme, [], TmpRes); 
-		true
-	),
-	Result = TmpRes.
 
-
+	
 
 getProgrammeCours(Cours, Programme):-
 	cours(Cours),
@@ -70,11 +63,7 @@ getProgrammeCours(Cours, Programme):-
 		findall(P1, type_cours(Cours,_,P1), L2),
 		union(L1,L2,Programme))
 	
-	).
-	%findall(P0, cheminement(P0, P), P),
-	%forall(member(C3, Liste), getNbCreditsValide(Etudiant, C3)).
-	%forall(member(P1, P),  appendProgram(Cours, P1, Result)),
-	%Programme = Result.  
+	).  
 	
 
 getCoursClasseInversee(Liste):-
